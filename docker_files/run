@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# make postgresql accesible outside the docker
+echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/9.5/main/pg_hba.conf
+echo "listen_addresses='*'" >> /etc/postgresql/9.5/main/postgresql.conf
+
+# set default password for postgres user
+service postgresql start && sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';" && service postgresql restart && service postgresql status
+export PGPASSWORD=postgres
+
+# download and unzip tomcat
+cd /home/atsuser/
+wget https://archive.apache.org/dist/tomcat/tomcat-8/v8.0.47/bin/apache-tomcat-8.0.47.zip
+unzip apache-tomcat-8.0.47.zip
+rm apache-tomcat-8.0.47.zip
+
+# download latest testexplorer SNAPSHOT war and zip files
+./app/get_latest_te_files.rb
+mkdir ats-testexplorer-4.0.2
+cd ats-testexplorer-4.0.2
+mv ../ats-testexplorer-4.0.2-*.zip .
+unzip ats-testexplorer-4.0.2-*.zip
+rm ats-testexplorer-4.0.2-*.zip
+
+# install default ATS log database 'AtsTestDb'
+cd db/postgresql
+./install_postgresql AtsTestDb
+
+# make atsuser owner of its home folder (due to files being downloaded via root, most of them are not owned by atsuser)
+chown -R atsuser:atsuser /home/atsuser

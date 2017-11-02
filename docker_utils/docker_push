@@ -1,0 +1,7 @@
+#!/bin/bash
+
+docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+
+docker tag ats-testexplorer-psql testdockerds/ats-testexplorer-psql:4.0.2
+
+docker push testdockerds/ats-testexplorer-psql
