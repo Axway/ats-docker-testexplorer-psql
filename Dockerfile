@@ -15,6 +15,7 @@ ADD ./docker_files /home/atsuser/app
 RUN apt-get update && apt-get -y install postgresql postgresql-client sudo wget unzip openjdk-8-jdk-headless lsof nano ruby
 
 RUN ["chmod", "+x", "/home/atsuser/app/get_latest_te_files.rb"]
+RUN ["chmod", "+x", "/home/atsuser/app/get_latest_httpdblogger_files.rb"]
 RUN ["chmod", "+x", "/home/atsuser/app/run"]
 RUN ["chmod", "+x", "/home/atsuser/app/entrypoint"]
 
