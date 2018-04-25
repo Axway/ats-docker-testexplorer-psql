@@ -4,7 +4,7 @@ require 'rexml/document'
 
 include REXML
 
-$TESTEXPLORER_VERSION = '4.0.4'
+$TESTEXPLORER_VERSION = '4.0.5'
 $ARTIFACT_TYPE = 'RELEASE'
 
 if $ARTIFACT_TYPE.eql?('RELEASE')
