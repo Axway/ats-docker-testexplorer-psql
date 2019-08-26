@@ -1,0 +1,122 @@
+#!/usr/bin/env bash
+
+ATS_USER_HOME=/home/atsuser
+TOMCAT_DOWNLOAD_LOCATION="http://archive.apache.org/dist/tomcat/tomcat-8/v8.5.45/bin/apache-tomcat-8.5.45.zip"
+TOMCAT_ZIP_NAME=`echo $TOMCAT_DOWNLOAD_LOCATION | awk '{len=split($0,a,"/"); print a[len]}'`
+TOMCAT_NAME=`echo $TOMCAT_ZIP_NAME | awk '{len=split($0,a,".zip"); print a[len-1]}'`
+TOMCAT_HOME=$ATS_USER_HOME/work/tomcat
+
+TESTEXPLORER_HOME=$ATS_USER_HOME/work/testexplorer
+TESTEXPLORER_VERSION="4.0.6-SNAPSHOT"
+TESTEXPLORER_DOWNLOAD_LOCATION="https://oss.sonatype.org/content/groups/public/com/axway/ats/testexplorer/ats-testexplorer/$TESTEXPLORER_VERSION"
+
+wget -O testexplorer-maven-metadata.xml $TESTEXPLORER_DOWNLOAD_LOCATION/maven-metadata.xml
+TESTEXPLORER_METADATA=`cat testexplorer-maven-metadata.xml | grep 'value' | uniq | xargs | awk '{n=split($0,a,">"); print a[n-1]}' | awk '{n=split($0,a,"<"); print a[1]}'`
+
+if [ -f "testexplorer-maven-metadata.xml" ];
+then
+	rm testexplorer-maven-metadata.xml
+fi
+
+HTTPDBLOGGER_HOME=$ATS_USER_HOME/work/httpdblogger
+HTTPDBLOGGER_VERSION="4.0.6-SNAPSHOT"
+HTTPDBLOGGER_DOWNLOAD_LOCATION="https://oss.sonatype.org/content/groups/public/com/axway/ats/httpdblogger/ats-httpdblogger/$HTTPDBLOGGER_VERSION"
+
+wget -O httpdblogger-maven-metadata.xml $HTTPDBLOGGER_DOWNLOAD_LOCATION/maven-metadata.xml
+HTTPDBLOGGER_METADATA=`cat httpdblogger-maven-metadata.xml | grep 'value' | uniq | xargs | awk '{n=split($0,a,">"); print a[n-1]}' | awk '{n=split($0,a,"<"); print a[1]}'`
+
+if [ -f "httpdblogger-maven-metadata.xml" ];
+then
+	rm httpdblogger-maven-metadata.xml
+fi
+
+PSQL_USER=postgres
+PSQL_PASSWORD=postgres
+ATS_LOG_DB=AtsTestDb
+
+# download tomcat
+if [ ! -d "$TOMCAT_HOME" ];
+then
+	mkdir $TOMCAT_HOME
+fi
+cd $TOMCAT_HOME
+
+wget $TOMCAT_DOWNLOAD_LOCATION
+unzip $TOMCAT_ZIP_NAME
+rm $TOMCAT_ZIP_NAME
+mv $TOMCAT_NAME/* .
+rm -rf $TOMCAT_NAME
+
+# config tomcat
+rm -rf $TOMCAT_HOME/webapps/ROOT/*
+cat <<EOF > $TOMCAT_HOME/webapps/ROOT/index.html
+<html>
+
+<head>
+<meta http-equiv="refresh" content="0;URL=/TestExplorer/">
+</head>
+
+<body>
+</body>
+EOF
+
+
+# download testexplorer
+if [ ! -d "$TESTEXPLORER_HOME" ];
+then
+	mkdir $TESTEXPLORER_HOME
+fi
+cd $TESTEXPLORER_HOME
+
+wget "$TESTEXPLORER_DOWNLOAD_LOCATION/ats-testexplorer-$TESTEXPLORER_METADATA.zip"
+unzip ats-testexplorer-$TESTEXPLORER_METADATA.zip
+rm ats-testexplorer-$TESTEXPLORER_METADATA.zip
+
+# config testexplorer
+mkdir tmp
+cd tmp
+cp ../ats-testexplorer-$TESTEXPLORER_VERSION.war .
+unzip ats-testexplorer-$TESTEXPLORER_VERSION.war
+sed -i 's/'db.port=1433'/'db.port=5432'/g' WEB-INF/classes/ats.config.properties
+rm ats-testexplorer-$TESTEXPLORER_VERSION.war
+zip -r ats-testexplorer-$TESTEXPLORER_VERSION.war ./*
+mv ats-testexplorer-$TESTEXPLORER_VERSION.war ../
+cd ../
+rm -rf ./tmp
+
+# deploy testexplorer
+mv *.war $TOMCAT_HOME/webapps/TestExplorer.war
+
+chmod +x db/postgresql/install_postgresql.sh
+# config postgresql
+
+PSQL_VERSION=`dpkg --get-selections | grep "postgresql-[0-9].*" | xargs | awk '{n=split($0,a," "); print a[n-1];}' | awk '{n=split($0,a,"-"); print a[n];}'`
+
+# make postgresql accesible outside the docker
+export PGPASSWORD=$PSQL_PASSWORD
+echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/$PSQL_VERSION/main/pg_hba.conf
+echo "listen_addresses='*'" >> /etc/postgresql/$PSQL_VERSION/main/postgresql.conf
+
+# set default password for postgres user
+service postgresql start && sudo -u postgres psql postgres -c "ALTER USER $PSQL_USER WITH PASSWORD '$PSQL_PASSWORD';" && service postgresql restart && service postgresql status
+
+
+# install postgresql
+./db/postgresql/install_postgresql.sh $ATS_LOG_DB
+
+service postgresql stop
+
+cd $ATS_USER_HOME/work
+# download http db logger
+if [ ! -d "$HTTPDBLOGGER_HOME" ];
+then
+	mkdir $HTTPDBLOGGER_HOME
+fi
+cd $HTTPDBLOGGER_HOME
+wget "$HTTPDBLOGGER_DOWNLOAD_LOCATION/ats-httpdblogger-$HTTPDBLOGGER_METADATA.war"
+# deploy http db logger
+mv *.war $TOMCAT_HOME/webapps/HttpDbLogger.war
+
+# do not ask for password, when user 'atsuser' executes sudo
+echo "atsuser ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/dont-prompt-atsuser-for-password
+

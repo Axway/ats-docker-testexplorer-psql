@@ -1,0 +1,5 @@
+#!/bin/bash
+
+IMAGE_NAME=ats-testexplorer-psql
+
+docker run -td -p 8080:8080 -p 5432:5432 $IMAGE_NAME

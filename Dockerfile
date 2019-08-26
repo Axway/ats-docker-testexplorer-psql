@@ -1,29 +1,34 @@
 FROM ubuntu
 
-WORKDIR /app
+ARG username=atsuser
+ARG password=atspassword
+ARG workdir=/home/$username/work
 
 USER root
 
-RUN adduser --disabled-password atsuser
+RUN adduser --disabled-password $username
 
-RUN echo "atsuser:atspassword" | chpasswd
+RUN echo "$username:$password" | chpasswd
 
-RUN usermod -a -G sudo atsuser
+RUN usermod -a -G sudo $username
 
-ADD ./docker_files /home/atsuser/app
+ADD ./docker_files $workdir
 
-RUN apt-get update && apt-get -y install postgresql postgresql-client sudo wget unzip openjdk-8-jdk-headless lsof nano ruby
+RUN apt-get update && apt-get -y install postgresql postgresql-client wget unzip openjdk-8-jre-headless zip sudo
 
-RUN ["chmod", "+x", "/home/atsuser/app/get_latest_te_files.rb"]
-RUN ["chmod", "+x", "/home/atsuser/app/get_latest_httpdblogger_files.rb"]
-RUN ["chmod", "+x", "/home/atsuser/app/run"]
-RUN ["chmod", "+x", "/home/atsuser/app/entrypoint"]
+RUN cd $workdir
+RUN chmod +x $workdir/config
+RUN chmod +x $workdir/entrypoint
 
-RUN /home/atsuser/app/run
+RUN $workdir/config
+
+RUN chown -R $username /home/$username
+
+USER $username
 
 EXPOSE 8080 5432
 
-USER atsuser
+ENV ENTRYPOINT_SCRIPT=$workdir/entrypoint
 
-ENTRYPOINT ["bash","-c", "/home/atsuser/app/entrypoint"]
+CMD ["bash","-c","$ENTRYPOINT_SCRIPT"]
 

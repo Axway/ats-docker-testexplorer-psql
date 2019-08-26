@@ -3,8 +3,9 @@
 ARTIFACT_VERSION=4.0.5
 
 # make postgresql accesible outside the docker
-echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/9.5/main/pg_hba.conf
-echo "listen_addresses='*'" >> /etc/postgresql/9.5/main/postgresql.conf
+ls -la /etc/postgresql/
+echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/`psql -v`/main/pg_hba.conf
+echo "listen_addresses='*'" >> /etc/postgresql/`psql -v`/main/postgresql.conf
 
 # set default password for postgres user
 service postgresql start && sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';" && service postgresql restart && service postgresql status
@@ -29,7 +30,8 @@ rm ats-testexplorer-$ARTIFACT_VERSION.zip
 
 # install default ATS log database 'AtsTestDb'
 cd db/postgresql
-./install_postgresql AtsTestDb
+chmod +x ./install_postgresql.sh
+./install_postgresql.sh AtsTestDb
 
 # make atsuser owner of its home folder (due to files being downloaded via root, most of them are not owned by atsuser)
 chown -R atsuser:atsuser /home/atsuser

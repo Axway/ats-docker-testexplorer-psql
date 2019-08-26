@@ -1,13 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+export PGPASSWORD=postgres
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 
 sudo service postgresql start
 
-cd /home/atsuser/apache-tomcat-8.0.47/bin
-
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-
-sh catalina.sh start
-
+cd ~/work/tomcat/bin
+chmod +x ~/work/tomcat/bin/catalina.sh
+bash -c "~/work/tomcat/bin/catalina.sh start"
 cd ~/
-
-bash 
+bash
