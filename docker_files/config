@@ -1,32 +1,33 @@
 #!/usr/bin/env bash
 
 ATS_USER_HOME=/home/atsuser
+
 TOMCAT_DOWNLOAD_LOCATION="http://archive.apache.org/dist/tomcat/tomcat-8/v8.5.45/bin/apache-tomcat-8.5.45.zip"
 TOMCAT_ZIP_NAME=`echo $TOMCAT_DOWNLOAD_LOCATION | awk '{len=split($0,a,"/"); print a[len]}'`
 TOMCAT_NAME=`echo $TOMCAT_ZIP_NAME | awk '{len=split($0,a,".zip"); print a[len-1]}'`
 TOMCAT_HOME=$ATS_USER_HOME/work/tomcat
 
 TESTEXPLORER_HOME=$ATS_USER_HOME/work/testexplorer
-TESTEXPLORER_VERSION="4.0.6-SNAPSHOT"
+TESTEXPLORER_VERSION="4.0.6"
 TESTEXPLORER_DOWNLOAD_LOCATION="https://oss.sonatype.org/content/groups/public/com/axway/ats/testexplorer/ats-testexplorer/$TESTEXPLORER_VERSION"
+TESTEXPLORER_METADATA=$TESTEXPLORER_VERSION
 
 wget -O testexplorer-maven-metadata.xml $TESTEXPLORER_DOWNLOAD_LOCATION/maven-metadata.xml
-TESTEXPLORER_METADATA=`cat testexplorer-maven-metadata.xml | grep 'value' | uniq | xargs | awk '{n=split($0,a,">"); print a[n-1]}' | awk '{n=split($0,a,"<"); print a[1]}'`
-
-if [ -f "testexplorer-maven-metadata.xml" ];
+if [ -s "testexplorer-maven-metadata.xml" ];
 then
+	TESTEXPLORER_METADATA=`cat testexplorer-maven-metadata.xml | grep 'value' | uniq | xargs | awk '{n=split($0,a,">"); print a[n-1]}' | awk '{n=split($0,a,"<"); print a[1]}'`
 	rm testexplorer-maven-metadata.xml
 fi
 
 HTTPDBLOGGER_HOME=$ATS_USER_HOME/work/httpdblogger
-HTTPDBLOGGER_VERSION="4.0.6-SNAPSHOT"
+HTTPDBLOGGER_VERSION="4.0.6"
 HTTPDBLOGGER_DOWNLOAD_LOCATION="https://oss.sonatype.org/content/groups/public/com/axway/ats/httpdblogger/ats-httpdblogger/$HTTPDBLOGGER_VERSION"
+HTTPDBLOGGER_METADATA=$HTTPDBLOGGER_VERSION
 
 wget -O httpdblogger-maven-metadata.xml $HTTPDBLOGGER_DOWNLOAD_LOCATION/maven-metadata.xml
-HTTPDBLOGGER_METADATA=`cat httpdblogger-maven-metadata.xml | grep 'value' | uniq | xargs | awk '{n=split($0,a,">"); print a[n-1]}' | awk '{n=split($0,a,"<"); print a[1]}'`
-
-if [ -f "httpdblogger-maven-metadata.xml" ];
+if [ -s "httpdblogger-maven-metadata.xml" ]; # file exists and its size is > 0
 then
+	HTTPDBLOGGER_METADATA=`cat httpdblogger-maven-metadata.xml | grep 'value' | uniq | xargs | awk '{n=split($0,a,">"); print a[n-1]}' | awk '{n=split($0,a,"<"); print a[1]}'`
 	rm httpdblogger-maven-metadata.xml
 fi
 
