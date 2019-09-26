@@ -17,9 +17,9 @@ A docker container with deployed ATS Test Explorer, HTTP DB Logger and PostgreSQ
       <li><strong>pass</strong> - AtsPassword</li>
     </ul>
   </li>
-  <li>Test Explorer link - http://localhost:8080/TestExplorer</li>
-  <li>HTTP Db Logger (logger) link - http://localhost:8080/HttpDbLogger/service/logger</li>
-  <li>HTTP Db Logger (reporter) link - http://localhost:8080/HttpDbLogger/service/reporter</li>
+  <li>Test Explorer link - <strong>http://localhost:8080/TestExplorer</strong></li>
+  <li>HTTP Db Logger (logger) link - <strong>http://localhost:8080/HttpDbLogger/service/logger</strong></li>
+  <li>HTTP Db Logger (reporter) link - <strong>http://localhost:8080/HttpDbLogger/service/reporter</strong></li>
 </ul>
 
 
