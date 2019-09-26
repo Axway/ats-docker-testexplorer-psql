@@ -7,6 +7,23 @@ A docker container with deployed ATS Test Explorer, HTTP DB Logger and PostgreSQ
 
 **Download** location at https://hub.docker.com/r/axway/ats-testexplorer-psql/
 
+**Configuration details**:
+<ul>
+  <li>Database details - Use this when configuring the connection to the HTTP DB Logger.</br>The TestExplorer is pre-configured to use those.
+    <ul>
+      <li><strong>name</strong> - AtsTestDb</li>
+      <li><strong>port</strong> - 5432</li>
+      <li><strong>user</strong> - AtsUser</li>
+      <li><strong>pass</strong> - AtsPassword</li>
+    </ul>
+  </li>
+  <li>Test Explorer link - http://localhost:8080/TestExplorer</li>
+  <li>HTTP Db Logger (logger) link - http://localhost:8080/HttpDbLogger/service/logger</li>
+  <li>HTTP Db Logger (reporter) link - http://localhost:8080/HttpDbLogger/service/reporter</li>
+</ul>
+
+
+
 Other **related projects**:
 <ul>
   <li>ATS Framework at https://github.com/Axway/ats-framework</li>
