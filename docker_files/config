@@ -8,7 +8,7 @@ TOMCAT_NAME=`echo $TOMCAT_ZIP_NAME | awk '{len=split($0,a,".zip"); print a[len-1
 TOMCAT_HOME=$ATS_USER_HOME/work/tomcat
 
 TESTEXPLORER_HOME=$ATS_USER_HOME/work/testexplorer
-TESTEXPLORER_VERSION="4.0.6"
+TESTEXPLORER_VERSION="4.0.7-SNAPSHOT"
 TESTEXPLORER_DOWNLOAD_LOCATION="https://oss.sonatype.org/content/groups/public/com/axway/ats/testexplorer/ats-testexplorer/$TESTEXPLORER_VERSION"
 TESTEXPLORER_METADATA=$TESTEXPLORER_VERSION
 
@@ -20,7 +20,7 @@ then
 fi
 
 HTTPDBLOGGER_HOME=$ATS_USER_HOME/work/httpdblogger
-HTTPDBLOGGER_VERSION="4.0.6"
+HTTPDBLOGGER_VERSION="4.0.7-SNAPSHOT"
 HTTPDBLOGGER_DOWNLOAD_LOCATION="https://oss.sonatype.org/content/groups/public/com/axway/ats/httpdblogger/ats-httpdblogger/$HTTPDBLOGGER_VERSION"
 HTTPDBLOGGER_METADATA=$HTTPDBLOGGER_VERSION
 
