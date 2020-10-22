@@ -2,13 +2,13 @@
 
 ATS_USER_HOME=/home/atsuser
 
-TOMCAT_DOWNLOAD_LOCATION="http://archive.apache.org/dist/tomcat/tomcat-8/v8.5.45/bin/apache-tomcat-8.5.45.zip"
+TOMCAT_DOWNLOAD_LOCATION="http://archive.apache.org/dist/tomcat/tomcat-8/v8.5.59/bin/apache-tomcat-8.5.59.zip"
 TOMCAT_ZIP_NAME=`echo $TOMCAT_DOWNLOAD_LOCATION | awk '{len=split($0,a,"/"); print a[len]}'`
 TOMCAT_NAME=`echo $TOMCAT_ZIP_NAME | awk '{len=split($0,a,".zip"); print a[len-1]}'`
 TOMCAT_HOME=$ATS_USER_HOME/work/tomcat
 
 TESTEXPLORER_HOME=$ATS_USER_HOME/work/testexplorer
-TESTEXPLORER_VERSION="4.0.7-SNAPSHOT"
+TESTEXPLORER_VERSION="4.0.7-jre11-SNAPSHOT"
 TESTEXPLORER_DOWNLOAD_LOCATION="https://oss.sonatype.org/content/groups/public/com/axway/ats/testexplorer/ats-testexplorer/$TESTEXPLORER_VERSION"
 TESTEXPLORER_METADATA=$TESTEXPLORER_VERSION
 
@@ -20,7 +20,7 @@ then
 fi
 
 HTTPDBLOGGER_HOME=$ATS_USER_HOME/work/httpdblogger
-HTTPDBLOGGER_VERSION="4.0.7-SNAPSHOT"
+HTTPDBLOGGER_VERSION="4.0.7-jre11-SNAPSHOT"
 HTTPDBLOGGER_DOWNLOAD_LOCATION="https://oss.sonatype.org/content/groups/public/com/axway/ats/httpdblogger/ats-httpdblogger/$HTTPDBLOGGER_VERSION"
 HTTPDBLOGGER_METADATA=$HTTPDBLOGGER_VERSION
 
