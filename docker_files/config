@@ -8,27 +8,27 @@ TOMCAT_NAME=`echo $TOMCAT_ZIP_NAME | awk '{len=split($0,a,".zip"); print a[len-1
 TOMCAT_HOME=$ATS_USER_HOME/work/tomcat
 
 TESTEXPLORER_HOME=$ATS_USER_HOME/work/testexplorer
-TESTEXPLORER_VERSION="4.0.7-jre11-SNAPSHOT"
+TESTEXPLORER_VERSION="4.0.7"
 TESTEXPLORER_DOWNLOAD_LOCATION="https://oss.sonatype.org/content/groups/public/com/axway/ats/testexplorer/ats-testexplorer/$TESTEXPLORER_VERSION"
 TESTEXPLORER_METADATA=$TESTEXPLORER_VERSION
 
 wget -O testexplorer-maven-metadata.xml $TESTEXPLORER_DOWNLOAD_LOCATION/maven-metadata.xml
 if [ -s "testexplorer-maven-metadata.xml" ];
 then
-	TESTEXPLORER_METADATA=`cat testexplorer-maven-metadata.xml | grep 'value' | uniq | xargs | awk '{n=split($0,a,">"); print a[n-1]}' | awk '{n=split($0,a,"<"); print a[1]}'`
-	rm testexplorer-maven-metadata.xml
+    TESTEXPLORER_METADATA=`cat testexplorer-maven-metadata.xml | grep 'value' | uniq | xargs | awk '{n=split($0,a,">"); print a[n-1]}' | awk '{n=split($0,a,"<"); print a[1]}'`
+    rm testexplorer-maven-metadata.xml
 fi
 
 HTTPDBLOGGER_HOME=$ATS_USER_HOME/work/httpdblogger
-HTTPDBLOGGER_VERSION="4.0.7-jre11-SNAPSHOT"
+HTTPDBLOGGER_VERSION="4.0.7"
 HTTPDBLOGGER_DOWNLOAD_LOCATION="https://oss.sonatype.org/content/groups/public/com/axway/ats/httpdblogger/ats-httpdblogger/$HTTPDBLOGGER_VERSION"
 HTTPDBLOGGER_METADATA=$HTTPDBLOGGER_VERSION
 
 wget -O httpdblogger-maven-metadata.xml $HTTPDBLOGGER_DOWNLOAD_LOCATION/maven-metadata.xml
 if [ -s "httpdblogger-maven-metadata.xml" ]; # file exists and its size is > 0
 then
-	HTTPDBLOGGER_METADATA=`cat httpdblogger-maven-metadata.xml | grep 'value' | uniq | xargs | awk '{n=split($0,a,">"); print a[n-1]}' | awk '{n=split($0,a,"<"); print a[1]}'`
-	rm httpdblogger-maven-metadata.xml
+    HTTPDBLOGGER_METADATA=`cat httpdblogger-maven-metadata.xml | grep 'value' | uniq | xargs | awk '{n=split($0,a,">"); print a[n-1]}' | awk '{n=split($0,a,"<"); print a[1]}'`
+    rm httpdblogger-maven-metadata.xml
 fi
 
 PSQL_USER=postgres
@@ -38,7 +38,7 @@ ATS_LOG_DB=AtsTestDb
 # download tomcat
 if [ ! -d "$TOMCAT_HOME" ];
 then
-	mkdir $TOMCAT_HOME
+    mkdir $TOMCAT_HOME
 fi
 cd $TOMCAT_HOME
 
@@ -49,7 +49,7 @@ mv $TOMCAT_NAME/* .
 rm -rf $TOMCAT_NAME
 
 # config tomcat
-rm -rf $TOMCAT_HOME/webapps/ROOT/*
+rm -rf $TOMCAT_HOME/webapps/ROOT/* $TOMCAT_HOME/webapps/examples/ $TOMCAT_HOME/webapps/docs/
 cat <<EOF > $TOMCAT_HOME/webapps/ROOT/index.html
 <html>
 
@@ -65,7 +65,7 @@ EOF
 # download testexplorer
 if [ ! -d "$TESTEXPLORER_HOME" ];
 then
-	mkdir $TESTEXPLORER_HOME
+    mkdir $TESTEXPLORER_HOME
 fi
 cd $TESTEXPLORER_HOME
 
@@ -79,6 +79,7 @@ cd tmp
 cp ../ats-testexplorer-$TESTEXPLORER_VERSION.war .
 unzip ats-testexplorer-$TESTEXPLORER_VERSION.war
 sed -i 's/'db.port=1433'/'db.port=5432'/g' WEB-INF/classes/ats.config.properties
+echo "$ATS_LOG_DB" > WEB-INF/classes/databases.txt
 rm ats-testexplorer-$TESTEXPLORER_VERSION.war
 zip -r ats-testexplorer-$TESTEXPLORER_VERSION.war ./*
 mv ats-testexplorer-$TESTEXPLORER_VERSION.war ../
@@ -111,7 +112,7 @@ cd $ATS_USER_HOME/work
 # download http db logger
 if [ ! -d "$HTTPDBLOGGER_HOME" ];
 then
-	mkdir $HTTPDBLOGGER_HOME
+    mkdir $HTTPDBLOGGER_HOME
 fi
 cd $HTTPDBLOGGER_HOME
 wget "$HTTPDBLOGGER_DOWNLOAD_LOCATION/ats-httpdblogger-$HTTPDBLOGGER_METADATA.war"
