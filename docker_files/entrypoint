@@ -8,6 +8,7 @@ sudo service postgresql start
 cd ~/work/tomcat/bin
 chmod +x ~/work/tomcat/bin/*.sh
 # Docker console includes Tomcat console
+export JAVA_OPTS=-Dats.attached.files.dir=~/work/tomcat
 bash -c "~/work/tomcat/bin/catalina.sh run"
 #  direct shell alternative
 #bash -c "~/work/tomcat/bin/startup.sh"
