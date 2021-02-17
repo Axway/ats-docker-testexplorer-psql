@@ -24,8 +24,8 @@ RUN apt-get update && apt-get -y install wget unzip openjdk-8-jre-headless zip g
 RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt bionic-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 # Import the repository signing key:
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
-# Update the package lists and install PostgreSQL 12
-RUN apt-get update && DEBIAN_FRONTEND="noninteractive" TZ="UTC" apt-get -y install postgresql-12 postgresql-client-12
+# Update the package lists, install PostgreSQL 12 and remove caches
+RUN apt-get update && DEBIAN_FRONTEND="noninteractive" TZ="UTC" apt-get -y install postgresql-12 postgresql-client-12 && rm -rf /var/lib/apt/lists/*
 
 RUN cd $workdir
 RUN chmod +x $workdir/config
