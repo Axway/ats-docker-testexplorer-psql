@@ -1,7 +1,7 @@
 FROM ubuntu:18.04
 LABEL maintainer="ats.team__@__axway.com"\
     product="Axway ATS TestExplorer with embeded DB"\
-    version="4.0.8"
+    version="4.0.9-SNAPSHOT"
 
 ARG username=atsuser
 ARG password=atspassword
